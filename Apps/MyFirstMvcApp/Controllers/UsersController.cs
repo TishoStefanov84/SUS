@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using SUS.HTTP;
 using SUS.MvcFramework;
@@ -15,6 +16,11 @@ namespace MyFirstMvcApp.Controllers
         public HttpResponse Register(HttpRequest request)
         {
             return this.View();
+        }
+
+        internal HttpResponse DoLogin(HttpRequest request)
+        {
+            return this.Redirect("/");
         }
     }
 }
