@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using MyFirstMvcApp.Controllers;
 using SUS.HTTP;
+using SUS.MvcFramework;
 
 namespace MyFirstMvcApp
 {
@@ -11,53 +10,24 @@ namespace MyFirstMvcApp
     {
         static async Task Main(string[] args)
         {
-            IHttpServer server = new HttpServer();
-            server.AddRoute("/", HomePage);
-            server.AddRoute("/favicon.ico", Favicon);
-            server.AddRoute("/about", About);
-            server.AddRoute("/users/login", Login);
-            server.AddRoute("/users/register", Register);
-            await server.Start(80);
-        }
+            var routeTable = new List<Route>();
+            
+            routeTable.Add(new Route("/", new HomeController().Index));
+            routeTable.Add(new Route("/users/login", new UsersController().Login));
+            routeTable.Add(new Route("/users/register", new UsersController().Register));
+            routeTable.Add(new Route("/cards/add", new CardsController().Add));
+            routeTable.Add(new Route("/cards/all", new CardsController().All));
+            routeTable.Add(new Route("/cards/collection", new CardsController().Collection));
 
-        static HttpResponse HomePage(HttpRequest request)
-        {
-            var responseHtml = "<h1>Welcome!</h1>"
-                + request.Headers.FirstOrDefault(x => x.Name == "User-Agent")?.Value;
-            var responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
-            var response = new HttpResponse("text/html", responseBodyBytes);
+            routeTable.Add(new Route("/favicon.ico", new StaticFilesController().Favicon));
+            routeTable.Add(new Route("/css/bootstrap.min.css", new StaticFilesController().BootstrapCss));
+            routeTable.Add(new Route("/css/custom.css", new StaticFilesController().CustomCss));
+            routeTable.Add(new Route("/js/custom.js", new StaticFilesController().CustomJs));
+            routeTable.Add(new Route("/js/bootstrap.bundle.min.js", new StaticFilesController().BootstrapJs));
 
-            return response;
-        }
-        static HttpResponse Favicon(HttpRequest request)
-        {
-            var fileBytes = File.ReadAllBytes("wwwroot/favicon.ico");
-            var response = new HttpResponse("image/vnd.microsoft.icon", fileBytes);
-            return response;
-        }
-        static HttpResponse About(HttpRequest request)
-        {
-            var responseHtml = "<h1>About...</h1>"; 
-            var responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
-            var response = new HttpResponse("text/html", responseBodyBytes);
-
-            return response;
-        }
-        static HttpResponse Login(HttpRequest request)
-        {
-            var responseHtml = "<h1>Login!!!</h1>";
-            var responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
-            var response = new HttpResponse("text/html", responseBodyBytes);
-
-            return response;
-        }
-        static HttpResponse Register(HttpRequest request)
-        {
-            var responseHtml = "<h1>Register</h1>";
-            var responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
-            var response = new HttpResponse("text/html", responseBodyBytes);
-
-            return response;
+            await Host.CreateHostAsync(routeTable, 80);
+          
+            
         }
     }
 }
