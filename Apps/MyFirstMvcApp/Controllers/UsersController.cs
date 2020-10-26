@@ -18,7 +18,8 @@ namespace MyFirstMvcApp.Controllers
             return this.View();
         }
 
-        internal HttpResponse DoLogin(HttpRequest request)
+        [HttpPost]
+        public HttpResponse DoLogin(HttpRequest request)
         {
             return this.Redirect("/");
         }
