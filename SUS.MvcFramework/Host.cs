@@ -58,8 +58,9 @@ namespace SUS.MvcFramework
 
                     routeTable.Add(new Route(url, httpMethod, (request) =>
                     {
-                        var instace = Activator.CreateInstance(controllerType);
-                        var response = method.Invoke(instace, new[] { request }) as HttpResponse;
+                        var instace = Activator.CreateInstance(controllerType) as Controller;
+                        instace.Request = request;
+                        var response = method.Invoke(instace, new object[] { }) as HttpResponse;
                         return response;
                     }));
 
