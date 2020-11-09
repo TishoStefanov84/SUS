@@ -10,6 +10,11 @@ namespace MyFirstMvcApp.Controllers
     {
         public HttpResponse Add()
         {
+            if (!this.IsUserSignIn())
+            {
+                return this.Redirect("/Users/Login");
+            }
+
             return this.View();
         }
 
@@ -40,6 +45,11 @@ namespace MyFirstMvcApp.Controllers
 
         public HttpResponse All()
         {
+            if (!this.IsUserSignIn())
+            {
+                return this.Redirect("/Users/Login");
+            }
+
             var db = new ApplicationDbContext();
             var cardsViewModel = db.Cards.Select(x => new CardViewModel
             {
@@ -57,6 +67,11 @@ namespace MyFirstMvcApp.Controllers
 
         public HttpResponse Collection()
         {
+            if (!this.IsUserSignIn())
+            {
+                return this.Redirect("/Users/Login");
+            }
+
             return this.View();
         }
     }
