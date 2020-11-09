@@ -11,11 +11,11 @@ namespace MyFirstMvcApp.Controllers
 {
     public class UsersController : Controller
     {
-        private UserService userService;
+        private readonly IUserService userService;
 
-        public UsersController()
+        public UsersController(IUserService userService)
         {
-            this.userService = new UserService();
+            this.userService = userService;
         }
 
         public HttpResponse Login()
@@ -31,6 +31,11 @@ namespace MyFirstMvcApp.Controllers
         [HttpPost("/Users/Login")]
         public HttpResponse DoLogin()
         {
+            if (this.IsUserSignIn())
+            {
+                return this.Redirect("/");
+            }
+
             var username = this.Request.FormData["username"];
             var password = this.Request.FormData["password"];
             var userId = this.userService.GetUserId(username, password);
@@ -56,6 +61,11 @@ namespace MyFirstMvcApp.Controllers
         [HttpPost("/Users/Register")]
         public HttpResponse DoRegister()
         {
+            if (this.IsUserSignIn())
+            {
+                return this.Redirect("/");
+            }
+
             var username = this.Request.FormData["username"];
             var email = this.Request.FormData["email"];
             var password = this.Request.FormData["password"];

@@ -8,6 +8,12 @@ namespace MyFirstMvcApp.Controllers
 {
     public class CardsController : Controller
     {
+        private readonly ApplicationDbContext db;
+
+        public CardsController(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
         public HttpResponse Add()
         {
             if (!this.IsUserSignIn())
@@ -21,14 +27,18 @@ namespace MyFirstMvcApp.Controllers
         [HttpPost("/Cards/Add")]
         public HttpResponse DoAdd()
         {
-            var dbContext = new ApplicationDbContext();
+            if (!this.IsUserSignIn())
+            {
+                return this.Redirect("/Users/Login");
+            }
+
 
             if (this.Request.FormData["name"].Length < 5)
             {
                 return this.Error("Name should be at least 5 characters long.");
             }
 
-            dbContext.Cards.Add(new Card
+            this.db.Cards.Add(new Card
             {
                 Attack = int.Parse(this.Request.FormData["attack"]),
                 Health = int.Parse(this.Request.FormData["health"]),
@@ -38,9 +48,9 @@ namespace MyFirstMvcApp.Controllers
                 Keyword = this.Request.FormData["keyword"],
             });
 
-            dbContext.SaveChanges();
+            this.db.SaveChanges();
 
-            return this.Redirect("/");
+            return this.Redirect("/Cards/All");
         }
 
         public HttpResponse All()
@@ -50,8 +60,7 @@ namespace MyFirstMvcApp.Controllers
                 return this.Redirect("/Users/Login");
             }
 
-            var db = new ApplicationDbContext();
-            var cardsViewModel = db.Cards.Select(x => new CardViewModel
+            var cardsViewModel = this.db.Cards.Select(x => new CardViewModel
             {
                 Name = x.Name,
                 Description = x.Description,

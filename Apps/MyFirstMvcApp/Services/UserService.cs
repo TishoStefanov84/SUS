@@ -10,9 +10,9 @@ namespace MyFirstMvcApp.Services
     public class UserService : IUserService
     {
         private readonly ApplicationDbContext db;
-        public UserService()
+        public UserService(ApplicationDbContext db)
         {
-            this.db = new ApplicationDbContext();
+            this.db = db;
         }
         public string CreateUser(string username, string email, string password)
         {
