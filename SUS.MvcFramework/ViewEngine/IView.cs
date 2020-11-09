@@ -2,6 +2,6 @@
 {
     public interface IView
     {
-        string GetHtml(object viewModel);
+        string GetHtml(object viewModel, string user);
     }
 }

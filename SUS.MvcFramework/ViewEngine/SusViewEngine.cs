@@ -13,11 +13,11 @@ namespace SUS.MvcFramework.ViewEngine
 {
     public class SusViewEngine : IViewEngine
     {
-        public string GetHtml(string templateCode, object viewModel)
+        public string GetHtml(string templateCode, object viewModel, string user)
         {
             var csharpCode = GenerateCSharpFromTemplate(templateCode, viewModel);
             var executableObject = GenerateExecutableCode(csharpCode, viewModel);
-            var html = executableObject.GetHtml(viewModel);
+            var html = executableObject.GetHtml(viewModel, user);
 
             return html;
         }
@@ -53,8 +53,9 @@ namespace ViewNamespace
 {
     public class ViewClass : IView
     {
-        public string GetHtml(object viewModel)
+        public string GetHtml(object viewModel, string user)
         {
+            var User = user;
             var Model = viewModel as " + typeOfModel + @";
             var html = new StringBuilder();
             
@@ -118,6 +119,15 @@ namespace ViewNamespace
                 .AddReferences(MetadataReference.CreateFromFile(typeof(IView).Assembly.Location));
             if (viewModel != null)
             {
+                if (viewModel.GetType().IsGenericType)
+                {
+                    var genericArguments = viewModel.GetType().GenericTypeArguments;
+                    foreach (var genericArgument in genericArguments)
+                    {
+                        compileResult = compileResult
+                            .AddReferences(MetadataReference.CreateFromFile(genericArgument.Assembly.Location));
+                    }
+                }
                 compileResult = compileResult
                 .AddReferences(MetadataReference.CreateFromFile(viewModel.GetType().Assembly.Location));
             }

@@ -61,12 +61,17 @@ namespace SUS.HTTP
             }
 
             var sessionCookie = this.Cookies.FirstOrDefault(x => x.Name == HttpConstants.SessionCookieName);
-            if (sessionCookie == null || !Sessions.ContainsKey(sessionCookie.Value))
+            if (sessionCookie == null)
             {
                 var sessionId = Guid.NewGuid().ToString();
                 this.Session = new Dictionary<string, string>();
                 Sessions.Add(sessionId, this.Session);
                 this.Cookies.Add(new Cookie(HttpConstants.SessionCookieName, sessionId));
+            }
+            else if (!Sessions.ContainsKey(sessionCookie.Value))
+            {
+                this.Session = new Dictionary<string, string>();
+                Sessions.Add(sessionCookie.Value, this.Session);
             }
             else
             {
@@ -77,7 +82,7 @@ namespace SUS.HTTP
 
             foreach (var parameter in parameters)
             {
-                var parameterParts = parameter.Split('=');
+                var parameterParts = parameter.Split(new[] { '=' }, 2);
                 var name = parameterParts[0];
                 var value = WebUtility.UrlDecode(parameterParts[1]);
 

@@ -6,7 +6,7 @@ using SUS.MvcFramework;
 
 namespace MyFirstMvcApp.Data
 {
-    public class User : UserIdentity
+    public class User : IdentityUser<string>
     {
         public User()
         {

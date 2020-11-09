@@ -9,8 +9,8 @@ using MyFirstMvcApp.Data;
 namespace MyFirstMvcApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201031073826_AddRoleToUser")]
-    partial class AddRoleToUser
+    [Migration("20201109100741_AddRole")]
+    partial class AddRole
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,6 +68,9 @@ namespace MyFirstMvcApp.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
