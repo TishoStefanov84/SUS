@@ -21,6 +21,15 @@ namespace SUS.MvcFramework
             AutoRegisterStaticFile(routeTable);
             AutoRegisterRoutes(routeTable, application, serviceCollection);
 
+            Console.WriteLine("Registered routes:");
+            foreach (var route in routeTable)
+            {
+                Console.WriteLine($"{route.Method} {route.Path}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Requests:");
+
             IHttpServer server = new HttpServer(routeTable);
 
             await server.Start(80);
@@ -76,7 +85,9 @@ namespace SUS.MvcFramework
                 var httpParameterValue = GetParameterFromRequest(request, parameter.Name);
                 var parameterValue = Convert.ChangeType(httpParameterValue, parameter.ParameterType);
 
-                if (parameterValue == null && parameter.ParameterType != typeof(string))
+                if (parameterValue == null && 
+                    parameter.ParameterType != typeof(string) &&
+                    parameter.ParameterType != typeof(int?))
                 {
                     parameterValue = Activator.CreateInstance(parameter.ParameterType);
                     var properties = parameter.ParameterType.GetProperties();
